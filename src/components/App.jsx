@@ -1,24 +1,28 @@
 import React from 'react';
-import { Link } from 'react-router';
+import { BrowserRouter, Route } from 'react-router-dom';
+import Search from './Search';
+import User from './User';
 
 /*
-This is the layout component. It's displayed by the top-level Route
-this.props.children will correspond to the current URL's component.
-
-If the URL is only / then the IndexRoute's component will be the child (Search component)
-If the URL is /user/:username then the User component will be displayed.
+This function is used to render the user route. Since it needs a 
+parameter for a URL, it needs to be in a function
 */
+const renderUser = (props) => {
+    return (<User username={props.match.params.username} />)
+}
+
 class App extends React.Component {
     render() {
         return (
-            <div className="main-app">
-                <header className="main-header">
-                    <h1><Link to="/">React GitHub Project</Link></h1>
-                </header>
-                <main className="main-content">
-                    {this.props.children}
-                </main>
-            </div>
+            <BrowserRouter>
+                <div >
+                    <header className="main-header"></header>
+                    <main className="main-content">
+                        <Route exact={true} path="/" render={() => <Search />} />
+                        <Route path="/user/:username" render={renderUser} />
+                    </main>
+                </div>
+            </BrowserRouter>
         );
     }
 };

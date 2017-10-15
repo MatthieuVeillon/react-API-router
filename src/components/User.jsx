@@ -1,5 +1,5 @@
 import React from 'react';
-import { Link } from 'react-router';
+import { Link } from 'react-router-dom';
 
 class User extends React.Component {
     constructor() {
@@ -20,7 +20,7 @@ class User extends React.Component {
     When `render` gets called again, `this.state.user` exists and we get the user info display instead of "LOADING..."
     */
     componentDidMount() {
-        fetch(`https://api.github.com/users/${this.props.params.username}`)
+        fetch(`https://api.github.com/users/${this.props.username}`)
         .then(response => response.json())
         .then(
             user => {
@@ -61,17 +61,17 @@ class User extends React.Component {
             {
                 name: 'Public Repos',
                 value: user.public_repos,
-                url: `/user/${this.props.params.username}/repos`
+                url: `/user/${this.props.username}/repos`
             },
             {
                 name: 'Followers',
                 value: user.followers,
-                url: `/user/${this.props.params.username}/followers`
+                url: `/user/${this.props.username}/followers`
             },
             {
                 name: 'Following',
                 value: user.following,
-                url: `/user/${this.props.params.username}/following`
+                url: `/user/${this.props.username}/following`
             }
         ];
 

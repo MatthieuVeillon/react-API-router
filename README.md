@@ -23,20 +23,11 @@ Let's take a look at the code that's already there. Many of the starter files sh
 2. `npm start` anytime you want to start developing. This will watch your JS files and re-run webpack when there are changes
 3. Start coding!
 
-In `index.js` we have the following route structure:
-
-```javascript
-<Route path="/" component={App}>
-  <IndexRoute component={Search}/>
-  <Route path="user/:username" component={User}/>
-</Route>
-```
-
-The top route says to load the `App` component. Looking at the code of `App.jsx`, you'll see that its `render` method outputs `{this.props.children}`. If the URL happens to be only `/`, then React Router will render an `<App/>` instance, and will pass it a `<Search/>` as its child. If the route happens to be `/user/:username`, React Router will display `<App/>` but will pass it `<User />` as a child.
+In `index.js` we see that the App component is the main component that is rendered
 
 When the `Search` component is displayed, it has a form and a button. When the form is submitted, we use React Router's `browserHistory` to **programmatically change the URL**. Look at the `Search`'s `_handleSubmit` method to see how that happens.
 
-Once we navigate to the new URL, React Router will render a `User` component. Looking at the `componentDidMount` method of the `User`, you'll see that it does an AJAX call using `this.props.params.username`. The reason why it has access to this prop is because the Router passed it when it mounted the component.
+Once we navigate to the new URL, React Router will render a `User` component. Looking at the `componentDidMount` method of the `User`, you'll see that it does an AJAX call using `this.props.username`.
 
 The AJAX call is made to `https://api.github.com/users/{USERNAME}` and returns the following information:
 
@@ -93,21 +84,19 @@ When clicking on the followers link in the UI, notice that the URL changes to `/
 In `index.js`, you currently have your user route setup like this:
 
 ```javascript
-<Route path="user/:username" component={User} />
+<Route path="user/:username" render={renderUser} />
 ```
 
-Let's change it to a route with a nested route
+We need to add the followers route to the User component. Add this line in the appropriate position in User.jsx
 
 ```javascript
-<Route path="user/:username" component={User}>
-  <Route path="followers" component={Followers} />
-</Route>
+<Route path="followers" component={Followers} />
 ```
 
 For this to do anything, we first have to implement the `Followers` component.
 
 ### Step 2: adding the `Followers` component
-Create a component called `Followers`. Since this component is also a route component, it will receive the same `this.props.params.username`. In this component, we're eventually going to do an AJAX call to grab the followers of the user.
+In this component, we're eventually going to do an AJAX call to grab the followers of the user.
 
 For the moment, create the component only with a `render` function. In there, use your props to return the following:
 
@@ -117,21 +106,12 @@ For the moment, create the component only with a `render` function. In there, us
 </div>
 ```
 
-### Step 3: displaying the nested component inside its parent
-When the URL changes to `followers`, we want to display the followers alongside the current `User` component. **This is why we are nesting the followers route inside the user route.**
-
-To reflect this nesting in our tree of components, we have to add a `{this.props.children}` output to our `User` component.
-
-Modify the `User` component to make it display its children just before the closing `</div>` in the `render` method.
-
-When this is done, go back to your browser. Search for a user, and click on FOLLOWERS. The followers component should be displayed below the user info.
-
-### Step 4: loading GitHub data in the `Followers` component:
+### Step 3: loading GitHub data in the `Followers` component:
 We want to load the followers of the current user as soon as the `Followers` component is mounted in the DOM. In the `componentDidMount` of `Followers`, use `fetch` to make a request to GitHub's API for the followers. Simply add `/followers` to the GitHub API URL for the user e.g. https://api.github.com/users/ziad-saab/followers
 
 In the callback to your AJAX request, use `setState` to set a `followers` state on your component.
 
-### Step 5: displaying the followers data in the `Followers` component:
+### Step 4: displaying the followers data in the `Followers` component:
 Using the `this.state.followers` in your `render` method, display the followers that you receive from GitHub. We'll do this in a few steps.
 
 1. Create a new pure component called `GithubUser`. It should receive a `user` prop, and use its `avatar_url` and `login` properties to display one GitHub user. The whole display should link back to that user's page in your app, using React Router's `Link` component. Here's what a sample output of your `GithubUser` component should look like:
@@ -167,14 +147,14 @@ return (
 
 Having done this, you should have a full `Followers` component ready to go.
 
-### Step 6: :warning: A wild bug has appeared!
+### Step 5: :warning: A wild bug has appeared!
 Try to click on a follower in the followers list. Notice that the URL changes to match the user you clicked, but the display does not change to reflect that. [We had the same problem in the previous workshop](https://github.com/ziad-saab/react-intro-workshop#advanced-inter-component-communication). If you recall, it was due to us fetching the data in `componentDidMount`, but sometimes a component's props change while it's still mounted.
 
 Here's what's happening in this case:
 
 1. User is on `/` and does a search for "gaearon"
 2. User gets redirected to `/user/gaearon` and React Router **mounts** an instance of the `User` component, passing it "gaearon" as `this.props.params.username`. The `User` component's `componentDidMount` method kicks in and fetches data with AJAX
-3. User clicks on FOLLOWERS, gets redirected to `/users/gaearon/followers`. React Router keeps the instance of `User` mounted, and passes it a new instance of `Followers` as `this.props.children`. The `Followers` instance is mounted and its `componentDidMount` kicks in, fetching the followers data.
+3. User clicks on FOLLOWERS, gets redirected to `/users/gaearon/followers`. React Router keeps the instance of `User` mounted, and and a new instance of `Followers` as `this.props.children`. The `Followers` instance is mounted and its `componentDidMount` kicks in, fetching the followers data.
 4. User clicks on one follower called "alexkuz" and the URL changes to `/users/alexkuz`. React Router **does not mount** a new `User` instance. Instead, it changes the `params` prop of the existing `User` instance to make it `{username: "alexkuz"}`.
 5. Since `componentDidMount` of `User` is not called, no AJAX call occurs.
 
