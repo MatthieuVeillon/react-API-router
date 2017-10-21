@@ -4,11 +4,11 @@ import Search from './Search';
 import User from './User';
 
 /*
-This function is used to render the user route. Since it needs a 
-parameter for a URL, it needs to be in a function
+This function is used to render the user route. Unfortunately, it always
+renders the same user. You need to fix this.
 */
-const renderUser = (props) => {
-    return (<User username={props.match.params.username} />)
+const renderUser = (info) => {
+    return (<User username="decodejacques" />)
 }
 
 class App extends React.Component {
