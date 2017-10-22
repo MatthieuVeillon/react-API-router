@@ -1,5 +1,8 @@
 import React from 'react';
-import { browserHistory as history } from 'react-router';
+import { Link } from 'react-router-dom'
+import { Redirect } from 'react-router-dom'
+
+//import { browserHistory as history } from 'react-router';
 
 /*
 This component displays a form where the user can enter a GitHub username
@@ -12,23 +15,20 @@ Why are we doing this instead of using a <Link>? The answer is straightforward, 
 class Search extends React.Component {
     constructor(props) {
         super(props);
-
-        // Why do we need to do this?? Make sure you understand!!!
-        this._handleSubmit = this._handleSubmit.bind(this);
+        this.state = { user: '' }
     }
-    _handleSubmit(e) {
-        e.preventDefault();
-        history.push(`/user/${this.refs.userInput.value}`)
+
+
+    handleInputChange = e => {
+        // This needs to be filled in
     }
 
     render() {
         return (
             <div className="search-page">
                 <h2>Enter a GitHub username</h2>
-                <form onSubmit={this._handleSubmit}>
-                    <input ref="userInput" className="search-page__input" type="text" />
-                    <button className="search-page__button">Search</button>
-                </form>
+                <input className="search-page__input" type="text" onChange={this.handleInputChange} />
+                <Link  to={'/user/' + this.state.user} className="fakeButton"> Search</Link>
             </div>
         );
     }
