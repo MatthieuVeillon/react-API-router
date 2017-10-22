@@ -28,7 +28,7 @@ class Search extends React.Component {
             <div className="search-page">
                 <h2>Enter a GitHub username</h2>
                 <input className="search-page__input" type="text" onChange={this.handleInputChange} />
-                <Link  to={'/user/' + this.state.user} className="fakeButton"> Search</Link>
+                <Link to={'/user/' + this.state.user} className="fakeButton"> Search</Link>
             </div>
         );
     }
