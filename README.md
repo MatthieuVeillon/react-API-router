@@ -25,8 +25,6 @@ Let's take a look at the code that's already there. Many of the starter files sh
 
 In `index.js` we see that the App component is the main component that is rendered
 
-When the `Search` component is displayed, it has a form and a button. When the form is submitted, we use React Router's `browserHistory` to **programmatically change the URL**. Look at the `Search`'s `_handleSubmit` method to see how that happens.
-
 Once we navigate to the new URL, React Router will render a `User` component. Looking at the `componentDidMount` method of the `User`, you'll see that it does an AJAX call using `this.props.username`.
 
 The AJAX call is made to `https://api.github.com/users/{USERNAME}` and returns the following information:
