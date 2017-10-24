@@ -1,13 +1,13 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
+import React from "react";
+import { Link } from "react-router-dom";
 
 class User extends React.Component {
-    constructor() {
-        super();
-        this.state = {};
-    }
+  constructor() {
+    super();
+    this.state = {};
+  }
 
-    /*
+  /*
     This method will be called by React after the first render. It's a perfect place to load
     data with AJAX. This User component gets mounted in the DOM as soon as the URL is /user/:username
 
@@ -19,79 +19,98 @@ class User extends React.Component {
     the data -- in the callback -- we call `setState` to put the user data in our state. This will trigger a re-render.
     When `render` gets called again, `this.state.user` exists and we get the user info display instead of "LOADING..."
     */
-    componentDidMount() {
-        fetch(`https://api.github.com/users/${this.props.username}`)
-        .then(response => response.json())
-        .then(
-            user => {
-                // How can we use `this` inside a callback without binding it??
-                // Make sure you understand this fundamental difference with arrow functions!!!
-                this.setState({
-                    user: user
-                });
-            }
-        );
-    }
 
-    /*
+  fetchData = () => {
+    fetch(`https://api.github.com/users/${this.props.username}`)
+      .then(response => response.json())
+      .then(user => {
+        // How can we use `this` inside a callback without binding it??
+        // Make sure you understand this fundamental difference with arrow functions!!!
+        this.setState({
+          user: user
+        });
+      });
+  };
+
+  componentDidMount() {
+    this.fetchData();
+  }
+
+  //   Call fetch if the username props change (aka the user is clicking on one of the followers)
+  componentDidUpdate(prevProps, prevState) {
+    // console.log("prevProps", prevProps.username);
+    // console.log("this.props", this.props.username);
+    console.log(prevProps.username == this.props.username);
+    if (prevProps.username == this.props.username) {
+      return;
+    } else {
+      this.fetchData();
+    }
+  }
+
+  /*
     This method is used as a mapping function. Eventually this could be factored out to its own component.
     */
-    renderStat(stat) {
-        return (
-            <li key={stat.name} className="user-info__stat">
-                <Link to={stat.url}>
-                    <p className="user-info__stat-value">{stat.value}</p>
-                    <p className="user-info__stat-name">{stat.name}</p>
-                </Link>
-            </li>
-        );
+  renderStat(stat) {
+    return (
+      <li key={stat.name} className="user-info__stat">
+        <Link to={stat.url}>
+          <p className="user-info__stat-value">{stat.value}</p>
+          <p className="user-info__stat-name">{stat.name}</p>
+        </Link>
+      </li>
+    );
+  }
+
+  render() {
+    // If the state doesn't have a user key, it means the AJAX didn't complete yet. Simply render a LOADING indicator.
+    if (!this.state.user) {
+      return <div className="user-page">LOADING...</div>;
     }
 
-    render() {
-        // If the state doesn't have a user key, it means the AJAX didn't complete yet. Simply render a LOADING indicator.
-        if (!this.state.user) {
-            return (<div className="user-page">LOADING...</div>);
-        }
+    // If we get to this part of `render`, then the user is loaded
+    const user = this.state.user;
 
-        // If we get to this part of `render`, then the user is loaded
-        const user = this.state.user;
+    // Gather up some number stats about the user, to be used in a map below
+    const stats = [
+      {
+        name: "Public Repos",
+        value: user.public_repos,
+        url: `/user/${this.props.username}/repos`
+      },
+      {
+        name: "Followers",
+        value: user.followers,
+        url: `/user/${this.props.username}/followers`
+      },
+      {
+        name: "Following",
+        value: user.following,
+        url: `/user/${this.props.username}/following`
+      }
+    ];
 
-        // Gather up some number stats about the user, to be used in a map below
-        const stats = [
-            {
-                name: 'Public Repos',
-                value: user.public_repos,
-                url: `/user/${this.props.username}/repos`
-            },
-            {
-                name: 'Followers',
-                value: user.followers,
-                url: `/user/${this.props.username}/followers`
-            },
-            {
-                name: 'Following',
-                value: user.following,
-                url: `/user/${this.props.username}/following`
-            }
-        ];
+    // Look in index.css for the styles that make this look like it does
+    return (
+      <div className="user-page">
+        <div className="user-info">
+          <Link className="user-info__text" to={`/user/${user.login}`}>
+            <img
+              className="user-info__avatar"
+              src={user.avatar_url}
+              alt={`${user.login} avatar`}
+            />
+            <h2 className="user-info__title">
+              {user.login} ({user.name})
+            </h2>
+            <p className="user-info__bio">{user.bio}</p>
+          </Link>
 
-        // Look in index.css for the styles that make this look like it does
-        return (
-            <div className="user-page">
-                <div className="user-info">
-                    <Link className="user-info__text" to={`/user/${user.login}`}>
-                        <img className="user-info__avatar" src={user.avatar_url} alt={`${user.login} avatar`}/>
-                        <h2 className="user-info__title">{user.login} ({user.name})</h2>
-                        <p className="user-info__bio">{user.bio}</p>
-                    </Link>
-
-                    <ul className="user-info__stats">
-                        {stats.map(this.renderStat)}
-                    </ul>
-                </div>
-            </div>
-        );
-    }
-};
+          <ul className="user-info__stats">{stats.map(this.renderStat)}</ul>
+        </div>
+      </div>
+    );
+  }
+}
 
 export default User;

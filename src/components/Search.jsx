@@ -1,6 +1,6 @@
-import React from 'react';
-import { Link } from 'react-router-dom'
-import { Redirect } from 'react-router-dom'
+import React from "react";
+import { Link } from "react-router-dom";
+import { Redirect } from "react-router-dom";
 
 //import { browserHistory as history } from 'react-router';
 
@@ -13,25 +13,37 @@ This will have as an effect to navigate to a new URL, which will display the Use
 Why are we doing this instead of using a <Link>? The answer is straightforward, but make sure you understand!!!
 */
 class Search extends React.Component {
-    constructor(props) {
-        super(props);
-        this.state = { user: '' }
-    }
+  constructor(props) {
+    super(props);
+    this.state = { user: "" };
+  }
 
+  handleInputChange = e => {
+    console.log(e.target.value);
+    this.setState({ user: e.target.value });
+    // this.setState((st) => ({
+    //   user: e.target.value;
+    // }));
+    // handleInputChange = (e) => { this.setState({user: e.target.value}); }
+    // { this.setState((st) => ({counter : st.counter + 1}) }
+  };
 
-    handleInputChange = e => {
-        // This needs to be filled in
-    }
-
-    render() {
-        return (
-            <div className="search-page">
-                <h2>Enter a GitHub username</h2>
-                <input className="search-page__input" type="text" onChange={this.handleInputChange} />
-                <Link to={'/user/' + this.state.user} className="fakeButton"> Search</Link>
-            </div>
-        );
-    }
-};
+  render() {
+    return (
+      <div className="search-page">
+        <h2>Enter a GitHub username</h2>
+        <input
+          className="search-page__input"
+          type="text"
+          onChange={this.handleInputChange}
+        />
+        <Link to={"/user/" + this.state.user} className="fakeButton">
+          {" "}
+          Search
+        </Link>
+      </div>
+    );
+  }
+}
 
 export default Search;
