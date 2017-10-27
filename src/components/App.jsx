@@ -27,12 +27,16 @@ const renderFollowing = info => {
 const renderRepo = info => {
   return <Repo username={info.match.params.name} />;
 };
+// const TEST = props => {
+//   return <div>{props.data}</div>;
+// };
 
 class App extends React.Component {
   render() {
     return (
       <BrowserRouter>
         <div>
+          {/* <TEST data={"hello world"} match={}/> */}
           <header className="main-header" />
           <main className="main-content">
             <Route exact={true} path="/" render={() => <Search />} />

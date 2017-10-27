@@ -65,7 +65,7 @@ class User extends React.Component {
   render() {
     // If the state doesn't have a user key, it means the AJAX didn't complete yet. Simply render a LOADING indicator.
     if (!this.state.user) {
-      return <div className="user-page">LOADING...</div>;
+      return <div className="loader" />;
     }
 
     // If we get to this part of `render`, then the user is loaded
